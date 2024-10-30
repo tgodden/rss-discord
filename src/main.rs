@@ -42,6 +42,7 @@ async fn send_webhook(
 ) -> anyhow::Result<()> {
     let webhook_url = dotenvy::var("WEBHOOK_URL")?;
     let client = WebhookClient::new(&webhook_url);
+    let date_format = dotenvy::var("DATETIME_FORMAT").unwrap_or("%d %B %R".to_owned());
     if let Err(err) = client
         .send(|mut message| {
             if let Ok(content) = dotenvy::var("MESSAGE_CONTENT") {
@@ -60,7 +61,10 @@ async fn send_webhook(
                     .title(content.title().unwrap_or("Unknown"))
                     .description(&description)
                     .url(content.link().unwrap_or("https://youtu.be/dQw4w9WgXcQ"))
-                    .footer(&format!("{:?}", chrono::offset::Local::now()), None);
+                    .footer(
+                        &format!("{}", chrono::offset::Local::now().format(&date_format)),
+                        None,
+                    );
                 if let Some(enclosure) = &content.enclosure {
                     if enclosure.mime_type.starts_with("image") {
                         embed.image(&enclosure.url);
@@ -104,10 +108,7 @@ fn parse_replacements() -> Vec<(String, String)> {
     let mut search = String::new();
     let mut replacement = String::new();
     let mut replacements = vec![];
-    for char in dotenvy::var("RSS_REPLACEMENTS")
-        .unwrap_or_default()
-        .chars()
-    {
+    for char in dotenvy::var("RSS_REPLACEMENTS").unwrap_or_default().chars() {
         match (char, escaped) {
             ('\\', false) => {
                 escaped = true;
