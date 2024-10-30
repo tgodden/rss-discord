@@ -23,6 +23,7 @@ Run the binary with the following environment variables set:
   replacement to apply on the embed's description with the syntax
   `<search>/<replacement>`. Backslashes are used to escape `:` and `/`
   characters.
+- DATETIME_FORMAT: Optional alternate format  for date and time (see [strftime](https://docs.rs/chrono/latest/chrono/format/strftime/index.html)).
 
 I recommend running the program periodically (i.e. with cron) to receive updates
 of the feed. To check for updates on multiple feeds at once, create multiple
