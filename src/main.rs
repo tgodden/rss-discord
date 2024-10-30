@@ -49,7 +49,7 @@ async fn send_webhook(
                 message = message.content(&content);
             }
             message.username(feed_name).embed(|embed| {
-                let description = content.description().unwrap_or("Unknown");
+                let description = content.description().unwrap_or("");
                 let mut description = match dotenvy::var("FEED_IS_HTML").is_ok() {
                     true => html2md::parse_html(description),
                     false => description.to_owned(),
@@ -58,7 +58,7 @@ async fn send_webhook(
                     description = description.replace(search, replacement);
                 }
                 embed
-                    .title(content.title().unwrap_or("Unknown"))
+                    .title(content.title().unwrap_or(""))
                     .description(&description)
                     .url(content.link().unwrap_or("https://youtu.be/dQw4w9WgXcQ"))
                     .footer(
